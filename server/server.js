@@ -11,12 +11,16 @@ import { Server } from 'socket.io';
 const app = express();
 const server = http.createServer(app);
 // Middleware
-
-app.use(express.json());
+// ✅ Enable CORS
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "http://localhost:5173",  // your frontend port
   credentials: true
 }));
+
+// ✅ Body size limits
+app.use(express.json({ limit: "10mb" })); // For large base64 images
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
 // Initialize socket.io server
 export const io = new Server(server, {
   cors: { origin: "*" }
@@ -57,7 +61,6 @@ app.get('/api/status', (req, res) => {
 app.use('/api/auth', userRouter);
 app.use('/api/messages', messageRouter);
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
+server.listen(3000, () => {
+  console.log(`🚀 Server is running on port 3000`);
 });
